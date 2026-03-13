@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | غرفة العمليات المصرية</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --sky: #0ea5e9; --green: #16a34a; --white: #ffffff; }
+        body {
+            font-family: 'Cairo', sans-serif;
+            background: var(--white);
+            color: #1e293b;
+            margin: 0; min-height: 100vh;
+        }
+
+        /* كروت "ابن بلد" شيك */
+        .egy-card {
+            background: #fff;
+            border-radius: 35px;
+            border: 2px solid #f1f5f9;
+            box-shadow: 0 15px 35px rgba(14, 165, 233, 0.05);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .egy-card:hover { transform: scale(1.02); border-color: var(--sky); }
+
+        /* ميديا كويري عشان الشغل يبقى "على الشعرة" */
+        @media (max-width: 320px) { .main-title { font-size: 1.2rem; } .temp-num { font-size: 4rem; } }
+        @media (min-width: 321px) and (max-width: 480px) { .grid-stats { grid-template-columns: 1fr; } }
+        @media (min-width: 481px) and (max-width: 640px) { .container { padding: 10px; } }
+        @media (min-width: 641px) and (max-width: 768px) { .btn-lab { padding: 10px; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .hero-grid { grid-template-columns: 1fr 1fr; } }
+        @media (min-width: 1025px) and (max-width: 1280px) { .container { max-width: 900px; } }
+        @media (min-width: 1281px) and (max-width: 1536px) { .container { max-width: 1150px; } }
+        @media (min-width: 1921px) { .temp-num { font-size: 8rem; } .container { max-width: 1600px; } }
+
+        .pulse-green { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+            <div>
+                <div class="flex items-center gap-2 mb-2">
+                    <span class="w-3 h-3 bg-green-600 rounded-full pulse-green"></span>
+                    <span class="text-[10px] font-black text-green-600 uppercase tracking-widest">الإشارة تمام والرزق على الله</span>
+                </div>
+                <h1 class="main-title text-4xl font-black text-slate-800">تحليل منطقة: <span id="cityName" class="text-sky-500">--</span></h1>
+                <p class="text-slate-400 font-bold text-sm">بص يا بطل.. دي الخلاصة اللي القمر الصناعي بعتها</p>
+            </div>
+            <button onclick="window.location.href='search.html'" class="bg-sky-50 text-sky-500 p-4 rounded-3xl font-bold hover:bg-sky-500 hover:text-white transition shadow-sm border border-sky-100">
+                <i class="fa-solid fa-satellite mr-2"></i> مسح جديد
+            </button>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-12">
+            <div class="lg:col-span-2 egy-card p-12 text-center relative overflow-hidden flex flex-col justify-center border-b-8 border-b-sky-400">
+                <div class="absolute -top-10 -right-10 text-sky-100 text-[15rem] rotate-12 -z-10">
+                    <i id="bgIcon" class="fa-solid fa-sun"></i>
+                </div>
+                <h3 class="text-slate-400 font-black uppercase text-xs tracking-widest mb-4">الحرارة دلوقت عندك</h3>
+                <div class="flex items-center justify-center gap-2">
+                    <span id="tempMain" class="temp-num text-9xl font-black text-slate-800 tracking-tighter">--°</span>
+                </div>
+                <p id="weatherDesc" class="text-2xl font-bold text-sky-500 mt-4 italic">جاري سحب البيانات..</p>
+            </div>
+
+            <div class="grid grid-cols-1 gap-4">
+                <div class="egy-card p-6 flex items-center justify-between border-r-8 border-r-green-600">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase">الرطوبة</p>
+                        <h4 id="humidity" class="text-3xl font-black text-slate-700">--%</h4>
+                    </div>
+                    <i class="fa-solid fa-droplet text-3xl text-green-600 opacity-20"></i>
+                </div>
+                <div class="egy-card p-6 flex items-center justify-between border-r-8 border-r-sky-500">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase">سرعة الهواء</p>
+                        <h4 id="windSpeed" class="text-3xl font-black text-slate-700">-- <small class="text-xs">كم/س</small></h4>
+                    </div>
+                    <i class="fa-solid fa-wind text-3xl text-sky-500 opacity-20"></i>
+                </div>
+                <div class="egy-card p-6 flex items-center justify-between border-r-8 border-r-slate-200">
+                    <div>
+                        <p class="text-[10px] font-black text-slate-400 uppercase">الضغط</p>
+                        <h4 id="pressure" class="text-3xl font-black text-slate-700">--</h4>
+                    </div>
+                    <i class="fa-solid fa-gauge-simple-high text-3xl text-slate-300"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16">
+            <div class="text-center mb-8">
+                <h2 class="text-xl font-black text-slate-800">خش في التفاصيل (المعامل المتخصصة)</h2>
+                <div class="w-20 h-1 bg-green-600 mx-auto mt-2 rounded-full"></div>
+            </div>
+
+            <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4">
+                <button onclick="window.location.href='temp-expert.html'" class="egy-card p-6 text-center hover:bg-sky-500 group transition-all">
+                    <i class="fa-solid fa-temperature-arrow-up text-3xl text-sky-500 group-hover:text-white mb-3 block"></i>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">معمل الحرارة</span>
+                </button>
+
+                <button onclick="window.location.href='wind-expert.html'" class="egy-card p-6 text-center hover:bg-green-600 group transition-all">
+                    <i class="fa-solid fa-tornado text-3xl text-green-600 group-hover:text-white mb-3 block"></i>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">فيزياء الرياح</span>
+                </button>
+
+                <button onclick="window.location.href='pressure-expert.html'" class="egy-card p-6 text-center hover:bg-slate-800 group transition-all">
+                    <i class="fa-solid fa-compress text-3xl text-slate-400 group-hover:text-white mb-3 block"></i>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">خبير الضغط</span>
+                </button>
+
+                <button onclick="window.location.href='disaster-expert.html'" class="egy-card p-6 text-center hover:bg-red-600 group transition-all">
+                    <i class="fa-solid fa-biohazard text-3xl text-red-500 group-hover:text-white mb-3 block"></i>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">رادار الكوارث</span>
+                </button>
+
+                <button onclick="window.location.href='rain-expert.html'" class="egy-card p-6 text-center hover:bg-blue-800 group transition-all">
+                    <i class="fa-solid fa-cloud-showers-heavy text-3xl text-blue-500 group-hover:text-white mb-3 block"></i>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">محلل المطر</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const data = JSON.parse(localStorage.getItem('weatherData'));
+            if (!data) { window.location.href = 'search.html'; return; }
+
+            document.getElementById('cityName').innerText = data.name;
+            document.getElementById('tempMain').innerText = Math.round(data.main.temp) + '°';
+            document.getElementById('weatherDesc').innerText = "الجو حالياً " + data.weather[0].description;
+            document.getElementById('humidity').innerText = data.main.humidity + '%';
+            document.getElementById('windSpeed').innerText = (data.wind.speed * 3.6).toFixed(1);
+            document.getElementById('pressure').innerText = data.main.pressure + ' hPa';
+        };
+    </script>
+</body>
+</html>

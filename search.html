@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | رادار البحث المصري</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sky: #0ea5e9;
+            --green: #16a34a;
+            --white: #ffffff;
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--white);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* التصميم بتاع شريط البحث */
+        .search-box {
+            background: white;
+            border: 3px solid var(--sky);
+            border-radius: 50px;
+            padding: 10px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 15px 45px rgba(14, 165, 233, 0.1);
+            transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .search-box:focus-within {
+            border-color: var(--green);
+            transform: translateY(-5px);
+        }
+
+        input {
+            flex: 1;
+            padding: 10px 20px;
+            border: none;
+            outline: none;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #334155;
+        }
+
+        /* نافذة التحذير (لما الدنيا تعك) */
+        #warningOverlay {
+            display: none;
+            position: fixed; inset: 0;
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(12px);
+            z-index: 9999;
+            align-items: center; justify-content: center; padding: 20px;
+        }
+
+        .egyptian-card {
+            background: white; border-radius: 35px; padding: 40px;
+            text-align: center; max-width: 450px; width: 100%;
+            border-bottom: 8px solid var(--green);
+            animation: zoomIn 0.3s ease;
+        }
+        @keyframes zoomIn { from { transform: scale(0.8); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+
+        /* الـ 8 ميديا كويري عشان الشغل يبقى لوز */
+        @media (max-width: 320px) { h1 { font-size: 1.8rem; } .search-box { border-radius: 15px; } }
+        @media (min-width: 321px) and (max-width: 480px) { .search-btn span { display: none; } }
+        @media (min-width: 481px) and (max-width: 640px) { .container { width: 95%; } }
+        @media (min-width: 641px) and (max-width: 768px) { .egyptian-card { max-width: 400px; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .container { max-width: 700px; } }
+        @media (min-width: 1025px) and (max-width: 1280px) { input { font-size: 1.4rem; } }
+        @media (min-width: 1281px) and (max-width: 1536px) { .container { max-width: 850px; } }
+        @media (min-width: 1921px) { .container { max-width: 1200px; } h1 { font-size: 5rem; } }
+    </style>
+</head>
+<body>
+
+    <div id="warningOverlay">
+        <div class="egyptian-card shadow-2xl">
+            <div class="w-20 h-20 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-6">
+                <i class="fa-solid fa-map-pin text-green-600 text-4xl animate-bounce"></i>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 mb-2">اسم المدينة مش مظبوط!</h2>
+            <p class="text-slate-500 mb-8 font-bold text-sm leading-relaxed">
+                يا بطل، الأقمار الصناعية تاهت وهي بتدور.. اسمح لنا نفتح الـ <span class="text-sky-500">GPS</span> ونجيب مكانك بالملّي، أو استخدم الخريطة أسهل.
+            </p>
+            <div class="flex flex-col gap-3">
+                <button onclick="askForGPS()" class="bg-sky-500 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-3 hover:bg-green-600 transition shadow-lg">
+                    <i class="fa-solid fa-location-crosshairs"></i>
+                    افتح الـ GPS وخلصنا
+                </button>
+                <button onclick="window.location.href='map-explorer.html'" class="bg-slate-100 text-slate-600 py-4 rounded-2xl font-bold flex items-center justify-center gap-3 hover:bg-slate-200 transition">
+                    <i class="fa-solid fa-earth-americas"></i>
+                    هاتها من على الخريطة
+                </button>
+                <button onclick="document.getElementById('warningOverlay').style.display='none'" class="text-slate-400 text-xs mt-4 underline">لأ، هكتبها صح المرة دي</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="container text-center px-4">
+        <div class="mb-10">
+            <h1 class="text-6xl font-black text-slate-800 italic mb-2">رادار <span class="text-sky-500">الجو</span></h1>
+            <p class="text-green-600 font-bold tracking-[0.3em] text-[10px] uppercase">بإذن الله - دقة 100%</p>
+        </div>
+
+        <div class="search-box">
+            <i class="fa-solid fa-satellite text-sky-400 mx-4 text-xl"></i>
+            <input type="text" id="cityInput" placeholder="اكتب مدينتك بالعربي أو بالإنجليزي..." autocomplete="off">
+            <button onclick="startScanning()" class="search-btn bg-sky-500 text-white px-8 py-4 rounded-full font-black hover:bg-green-600 transition shadow-md">
+                <span>ابدأ المسح</span>
+                <i class="fa-solid fa-bolt ml-2"></i>
+            </button>
+        </div>
+        
+        <p class="mt-8 text-slate-300 font-bold text-[10px] italic">مُتصل الآن بالأقمار الصناعية المصرية والـ NASA</p>
+    </div>
+
+    <script>
+        const API_KEY = "3348f565546828bf5e2c7f6cc94a8ced";
+
+        async function startScanning() {
+            const city = document.getElementById('cityInput').value.trim();
+            if (!city) {
+                document.getElementById('warningOverlay').style.display = 'flex';
+                return;
+            }
+
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&appid=${API_KEY}`);
+                const data = await res.json();
+
+                if (data.cod === 200) {
+                    localStorage.setItem('weatherData', JSON.stringify(data));
+                    window.location.href = 'general-analysis.html';
+                } else {
+                    document.getElementById('warningOverlay').style.display = 'flex';
+                }
+            } catch (err) {
+                document.getElementById('warningOverlay').style.display = 'flex';
+            }
+        }
+
+        function askForGPS() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (pos) => {
+                    const { latitude, longitude } = pos.coords;
+                    const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=metric&appid=${API_KEY}`);
+                    const data = await res.json();
+
+                    if (data.cod === 200) {
+                        localStorage.setItem('weatherData', JSON.stringify(data));
+                        window.location.href = 'general-analysis.html';
+                    }
+                }, () => {
+                    alert("يا بطل لازم توافق على الـ GPS عشان السيستم يشتغل!");
+                });
+            }
+        }
+
+        document.getElementById('cityInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') startScanning();
+        });
+    </script>
+</body>
+</html>

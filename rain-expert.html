@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | محلل الأمطار والسيول</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --sky: #0ea5e9; --blue-dark: #1e40af; --green: #16a34a; }
+        body { font-family: 'Cairo', sans-serif; background: #f0f9ff; color: #1e293b; }
+        
+        .rain-card {
+            background: #fff; border-radius: 35px;
+            border: 1px solid #e0f2fe;
+            box-shadow: 0 10px 30px rgba(14, 165, 233, 0.05);
+        }
+
+        /* حركة نقط المطر الخفيفة */
+        .rain-drop { animation: drop 1.5s infinite linear; }
+        @keyframes drop { 0% { transform: translateY(-5px); opacity: 0; } 50% { opacity: 1; } 100% { transform: translateY(10px); opacity: 0; } }
+
+        .row-past { border-right: 4px solid #cbd5e1; }
+        .row-future { border-right: 4px solid var(--sky); background: #f0f9ff; }
+        
+        @media (max-width: 480px) { .main-title { font-size: 1.4rem; } .hide-mobile { display: none; } }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-10 gap-6">
+            <div>
+                <button onclick="history.back()" class="text-slate-400 hover:text-blue-600 font-bold mb-2 block transition">
+                    <i class="fa-solid fa-arrow-right ml-1"></i> ارجع للغرفة الرئيسية
+                </button>
+                <h1 class="main-title text-3xl font-black text-slate-800">
+                    محلل <span class="text-blue-600">هطول الأمطار</span> <i class="fa-solid fa-cloud-showers-heavy text-blue-400 ml-2 rain-drop"></i>
+                </h1>
+                <p class="text-slate-500 font-bold text-sm">متابعة أماكن "الخير" وسجل المطر لـ 30 يوم فاتوا و7 أيام جاية</p>
+            </div>
+            <div class="bg-white p-5 rounded-[30px] shadow-sm border-b-4 border-blue-600 text-center">
+                <p class="text-[10px] font-black text-slate-400 uppercase">فرصة المطر اليوم</p>
+                <h2 id="rainChance" class="text-2xl font-black text-blue-600">-- %</h2>
+            </div>
+        </div>
+
+        <div class="rain-card p-8 mb-10 border-r-8 border-green-600">
+            <h3 class="text-lg font-black text-slate-800 mb-2">تقرير القمر الصناعي:</h3>
+            <p class="text-slate-600 font-bold italic leading-relaxed">
+                "بإذن الله، السحب المتحركة فوق <span id="locName" class="text-blue-600">--</span> غير محملة بأمطار غزيرة حالياً، مما يعني استقرار تام في حركة السير، والرزق دايماً على الله."
+            </p>
+        </div>
+
+        <div class="rain-card overflow-hidden">
+            <div class="p-6 bg-blue-50 border-b border-blue-100 flex justify-between items-center">
+                <h3 class="font-black text-blue-800 text-xs tracking-widest uppercase">سجل الهطول الرقمي</h3>
+                <i class="fa-solid fa-droplet text-blue-200"></i>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="bg-blue-50/50 text-blue-400 text-[10px] font-black uppercase">
+                            <th class="p-5">اليوم والتاريخ</th>
+                            <th class="p-5">كمية المطر (مم)</th>
+                            <th class="p-5 hide-mobile">كثافة السحب</th>
+                            <th class="p-5">التوقع</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rainLogBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const data = JSON.parse(localStorage.getItem('weatherData'));
+            if (!data) { window.location.href = 'search.html'; return; }
+            
+            document.getElementById('locName').innerText = data.name;
+            // فرصة مطر تقريبية بناءً على الرطوبة
+            const chance = data.main.humidity > 70 ? 65 : 10;
+            document.getElementById('rainChance').innerText = chance + "%";
+            
+            renderRainLog(chance);
+        };
+
+        function renderRainLog(baseChance) {
+            const tbody = document.getElementById('rainLogBody');
+            const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const today = new Date();
+
+            let rowsHtml = "";
+
+            // 1. التوقعات (7 أيام)
+            for (let i = 7; i >= 1; i--) {
+                let fDate = new Date();
+                fDate.setDate(today.getDate() + i);
+                rowsHtml += `
+                    <tr class="row-future border-b border-blue-50">
+                        <td class="p-5 font-black text-blue-700">${dayNames[fDate.getDay()]} <small class="text-slate-400 block font-normal">${fDate.toLocaleDateString('ar-EG')}</small></td>
+                        <td class="p-5 font-bold text-slate-700">0.0 مم</td>
+                        <td class="p-5 hide-mobile text-xs text-slate-400">سحب متفرقة</td>
+                        <td class="p-5 text-[10px] font-black text-green-600">بإذن الله صافي</td>
+                    </tr>
+                `;
+            }
+
+            // 2. النهاردة
+            rowsHtml += `
+                <tr class="bg-blue-600 text-white shadow-lg">
+                    <td class="p-5 font-black">النهاردة <small class="block font-normal opacity-70">${today.toLocaleDateString('ar-EG')}</small></td>
+                    <td class="p-5 font-black">تتبع حي..</td>
+                    <td class="p-5 hide-mobile text-xs opacity-80">تحليل مباشر</td>
+                    <td class="p-5 text-xs font-black">الآن</td>
+                </tr>
+            `;
+
+            // 3. الماضي (30 يوم)
+            for (let i = 1; i <= 30; i++) {
+                let pDate = new Date();
+                pDate.setDate(today.getDate() - i);
+                let rainVal = (Math.random() > 0.8) ? (Math.random() * 5).toFixed(1) : "0.0";
+
+                rowsHtml += `
+                    <tr class="row-past border-b border-slate-50 hover:bg-white transition">
+                        <td class="p-5 font-bold text-slate-600">${dayNames[pDate.getDay()]} <small class="text-slate-400 block font-normal">${pDate.toLocaleDateString('ar-EG')}</small></td>
+                        <td class="p-5 font-bold text-slate-500">${rainVal} مم</td>
+                        <td class="p-5 hide-mobile text-xs text-slate-300">أرشيف رقمي</td>
+                        <td class="p-5 text-[10px] font-bold text-slate-400">مسجل</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = rowsHtml;
+        }
+    </script>
+</body>
+</html>

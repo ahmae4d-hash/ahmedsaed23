@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | رادار المسح الجغرافي</title>
+    
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sky: #0ea5e9;
+            --green: #16a34a;
+            --white: #ffffff;
+        }
+
+        body, html { height: 100%; margin: 0; font-family: 'Cairo', sans-serif; background: #f8fafc; overflow: hidden; }
+        
+        #map { height: 100vh; width: 100vw; z-index: 1; }
+
+        /* برواز القمر الصناعي الشيك */
+        .map-frame {
+            position: absolute; inset: 0;
+            border: 15px solid rgba(255, 255, 255, 0.8);
+            pointer-events: none; z-index: 1000;
+        }
+
+        /* واجهة الكشف العلوي */
+        .scanner-header {
+            position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
+            z-index: 1001; background: white;
+            padding: 10px 25px; border-radius: 50px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            border-bottom: 4px solid var(--green);
+            display: flex; align-items: center; gap: 15px;
+            min-width: 280px;
+        }
+
+        /* زرار الرجوع للبيت */
+        .back-home {
+            position: absolute; bottom: 40px; right: 40px;
+            z-index: 1001; background: var(--sky);
+            color: white; width: 60px; height: 60px;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(14, 165, 233, 0.3);
+            cursor: pointer; transition: 0.3s;
+        }
+        .back-home:hover { background: var(--green); transform: scale(1.1); }
+
+        /* 8 ميديا كويري عشان الشغل يظبط */
+        @media (max-width: 320px) { .scanner-header { font-size: 0.7rem; min-width: 200px; padding: 5px 15px; } .map-frame { border-width: 5px; } }
+        @media (min-width: 321px) and (max-width: 480px) { .scanner-header { top: 15px; width: 90%; } }
+        @media (min-width: 481px) and (max-width: 640px) { .back-home { bottom: 20px; right: 20px; } }
+        @media (min-width: 641px) and (max-width: 768px) { #map { filter: saturate(1.2); } }
+        @media (min-width: 769px) and (max-width: 1024px) { .scanner-header { font-size: 1.1rem; } }
+        @media (min-width: 1025px) and (max-width: 1280px) { .map-frame { border-width: 20px; } }
+        @media (min-width: 1281px) and (max-width: 1536px) { .scanner-header { padding: 15px 40px; } }
+        @media (min-width: 1921px) { .scanner-header { transform: translateX(-50%) scale(1.5); } }
+
+        /* ستايل الليبلز (الأسماء) عشان تبان نظيفة */
+        .leaflet-container { background: #000 !important; }
+    </style>
+</head>
+<body>
+
+    <div class="map-frame"></div>
+
+    <div class="scanner-header">
+        <div id="scanStatus" class="w-3 h-3 bg-green-500 rounded-full animate-ping"></div>
+        <span class="font-black text-slate-700">الرادار جاهز.. <span class="text-sky-500 font-bold">دوس على أي مكان نكشف عليه!</span></span>
+    </div>
+
+    <div id="map"></div>
+
+    <div onclick="window.location.href='search.html'" class="back-home" title="رجوع للبحث">
+        <i class="fa-solid fa-house-chimney text-xl"></i>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        const API_KEY = "3348f565546828bf5e2c7f6cc94a8ced";
+
+        // 1. تشغيل الخريطة بمركز افتراضي (مصر المحروسة)
+        var map = L.map('map', {
+            zoomControl: false,
+            attributionControl: false
+        }).setView([26.8206, 30.8025], 6);
+
+        // 2. طبقة القمر الصناعي (صور حقيقية)
+        L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19
+        }).addTo(map);
+
+        // 3. طبقة الأسماء والمدن (Hybrid) - عشان تبان الدول والشوارع
+        L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-hybrid/{z}/{x}/{y}{r}.png', {
+            maxZoom: 19,
+            opacity: 0.7
+        }).addTo(map);
+
+        // 4. لما يدوس على الخريطة
+        map.on('click', function(e) {
+            const { lat, lng } = e.latlng;
+            
+            // تغيير الحالة في الهيدر
+            const header = document.querySelector('.scanner-header span');
+            header.innerHTML = `جاري سحب بيانات الموقع: <span class="text-green-600">${lat.toFixed(2)}, ${lng.toFixed(2)}</span>`;
+            
+            // إضافة علامة "نيشان" مكان الضغط
+            L.circleMarker([lat, lng], {
+                radius: 12,
+                color: '#16a34a',
+                fillColor: '#0ea5e9',
+                fillOpacity: 0.6
+            }).addTo(map).bindPopup("<b style='font-family:Cairo'>بإذن الله جاري التحليل..</b>").openPopup();
+
+            // تنفيذ الكشف
+            performAnalysis(lat, lng);
+        });
+
+        async function performAnalysis(lat, lng) {
+            try {
+                const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lng}&units=metric&appid=${API_KEY}`);
+                const data = await res.json();
+
+                if (data.cod === 200) {
+                    localStorage.setItem('weatherData', JSON.stringify(data));
+                    // تأخير بسيط عشان نحس بالتحليل
+                    setTimeout(() => {
+                        window.location.href = 'general-analysis.html';
+                    }, 1200);
+                }
+            } catch (err) {
+                alert("الشبكة مش تمام، حاول تاني يا بطل!");
+            }
+        }
+
+        // محاولة جلب موقع المستخدم فوراً لو وافق
+        map.locate({setView: true, maxZoom: 8});
+    </script>
+</body>
+</html>

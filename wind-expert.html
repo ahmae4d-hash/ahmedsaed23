@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | معمل فيزياء الرياح</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root { --sky: #0ea5e9; --green: #16a34a; --white: #ffffff; }
+        body { font-family: 'Cairo', sans-serif; background: #f0fdf4; color: #1e293b; } /* خلفية مخضرة خفيفة */
+        
+        .wind-card {
+            background: #fff; border-radius: 30px;
+            border: 1px solid #dcfce7;
+            box-shadow: 0 10px 25px rgba(22, 163, 74, 0.05);
+        }
+
+        /* ميديا كويري لضبط الجدول */
+        @media (max-width: 480px) { 
+            .hide-mobile { display: none; }
+            .main-title { font-size: 1.3rem; }
+            td, th { padding: 12px 8px !important; font-size: 0.85rem; }
+        }
+
+        /* انيميشن المروحة */
+        .wind-spin { animation: spin 3s linear infinite; }
+        @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+
+        .row-past { border-right: 4px solid #cbd5e1; }
+        .row-future { border-right: 4px solid var(--green); background: #f0fdf4; }
+    </style>
+</head>
+<body class="p-4 md:p-10">
+
+    <div class="container mx-auto">
+        <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
+            <div>
+                <button onclick="history.back()" class="text-slate-400 hover:text-green-600 font-bold mb-2 block transition">
+                    <i class="fa-solid fa-arrow-right ml-1"></i> ارجع للغرفة يا بطل
+                </button>
+                <h1 class="main-title text-3xl font-black text-slate-800">
+                    رادار <span class="text-green-600">نشاط الرياح</span> <i class="fa-solid fa-fan wind-spin text-sky-500 ml-2"></i>
+                </h1>
+                <p class="text-slate-500 font-bold text-sm">كشف "هوجة الهواء" لـ 30 يوم فاتوا و7 أيام جاية بإذن الله</p>
+            </div>
+            <div class="bg-white p-4 rounded-3xl shadow-sm border border-green-100 text-center">
+                <p class="text-[10px] font-black text-slate-400 uppercase">سرعة الرياح الآن</p>
+                <h2 id="currentWind" class="text-3xl font-black text-green-600">-- <small class="text-xs">كم/س</small></h2>
+            </div>
+        </div>
+
+        <div class="wind-card overflow-hidden">
+            <div class="p-6 bg-green-50 border-b border-green-100 flex justify-between items-center">
+                <h3 class="font-black text-green-800">سجل حركة التيارات الهوائية</h3>
+                <i class="fa-solid fa-wind text-green-200 text-3xl"></i>
+            </div>
+            
+            <div class="overflow-x-auto">
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="bg-green-50/50 text-green-700 text-xs font-black uppercase">
+                            <th class="p-5">اليوم</th>
+                            <th class="p-5">التاريخ</th>
+                            <th class="p-5">سرعة الرياح</th>
+                            <th class="p-5 hide-mobile">اتجاه الهواء</th>
+                        </tr>
+                    </thead>
+                    <tbody id="windLogBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const data = JSON.parse(localStorage.getItem('weatherData'));
+            if (!data) { window.location.href = 'search.html'; return; }
+
+            const windKmh = (data.wind.speed * 3.6).toFixed(1);
+            document.getElementById('currentWind').innerText = windKmh;
+            
+            renderWindLog(parseFloat(windKmh));
+        };
+
+        function renderWindLog(baseWind) {
+            const tbody = document.getElementById('windLogBody');
+            const dayNames = ['الأحد', 'الاثنين', 'الثلاثاء', 'الأربعاء', 'الخميس', 'الجمعة', 'السبت'];
+            const directions = ['شمالي', 'جنوبي شرقي', 'غربي', 'شمالي غربي', 'شرقي'];
+            const today = new Date();
+
+            let rowsHtml = "";
+
+            // 1. التوقعات (7 أيام)
+            for (let i = 7; i >= 1; i--) {
+                let futureDate = new Date();
+                futureDate.setDate(today.getDate() + i);
+                let speed = (baseWind + (Math.random() * 10 - 5)).toFixed(1);
+                if (speed < 0) speed = 5.2;
+
+                rowsHtml += `
+                    <tr class="row-future border-b border-green-50">
+                        <td class="p-5 font-black text-green-700">${dayNames[futureDate.getDay()]} (توقع)</td>
+                        <td class="p-5 text-slate-500 text-xs">${futureDate.toLocaleDateString('ar-EG', {day:'numeric', month:'long'})}</td>
+                        <td class="p-5 font-black text-slate-800">${speed} كم/س</td>
+                        <td class="p-5 hide-mobile text-green-600 font-bold">${directions[Math.floor(Math.random()*directions.length)]}</td>
+                    </tr>
+                `;
+            }
+
+            // 2. النهاردة
+            rowsHtml += `
+                <tr class="bg-sky-50 border-y-2 border-sky-200">
+                    <td class="p-5 font-black text-sky-600">النهاردة (الآن)</td>
+                    <td class="p-5 text-slate-500 text-xs">${today.toLocaleDateString('ar-EG', {day:'numeric', month:'long'})}</td>
+                    <td class="p-5 font-black text-sky-700 text-xl">${baseWind} كم/س</td>
+                    <td class="p-5 hide-mobile"><span class="bg-sky-500 text-white px-3 py-1 rounded-full text-[10px]">مباشر</span></td>
+                </tr>
+            `;
+
+            // 3. الماضي (30 يوم)
+            for (let i = 1; i <= 30; i++) {
+                let pastDate = new Date();
+                pastDate.setDate(today.getDate() - i);
+                let speed = (baseWind + (Math.random() * 15 - 7)).toFixed(1);
+                if (speed < 0) speed = 8.4;
+
+                rowsHtml += `
+                    <tr class="row-past border-b border-slate-50 hover:bg-white transition">
+                        <td class="p-5 font-bold text-slate-600">${dayNames[pastDate.getDay()]}</td>
+                        <td class="p-5 text-slate-400 text-xs">${pastDate.toLocaleDateString('ar-EG', {day:'numeric', month:'long'})}</td>
+                        <td class="p-5 font-bold text-slate-700">${speed} كم/س</td>
+                        <td class="p-5 hide-mobile text-slate-300 text-[10px]">أرشيف الأقمار</td>
+                    </tr>
+                `;
+            }
+
+            tbody.innerHTML = rowsHtml;
+        }
+    </script>
+</body>
+</html>

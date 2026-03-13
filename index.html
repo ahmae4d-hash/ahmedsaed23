@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SATELLITE OS | السيستم المصري للأرصاد</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --sky-blue: #0ea5e9;    /* الأزرق السماوي */
+            --holy-green: #16a34a;  /* الأخضر الديني */
+            --pure-white: #ffffff;  /* الأبيض */
+        }
+
+        body {
+            font-family: 'Cairo', sans-serif;
+            background-color: var(--pure-white);
+            margin: 0;
+            overflow: hidden;
+            color: #1e293b;
+        }
+
+        /* حركات الخلفية الهادية */
+        .bg-pattern {
+            position: absolute; inset: 0;
+            background-image: radial-gradient(var(--sky-blue) 0.5px, transparent 0.5px);
+            background-size: 30px 30px;
+            opacity: 0.1;
+            z-index: -1;
+        }
+
+        /* الـ 8 ميديا كويري عشان الشغل يبان مظبوط على أي تليفون */
+        @media (max-width: 320px) { h1 { font-size: 2rem !important; } .btn-main { width: 100%; } }
+        @media (min-width: 321px) and (max-width: 480px) { .hero-text { font-size: 0.9rem; } }
+        @media (min-width: 481px) and (max-width: 640px) { .container { padding: 10px; } }
+        @media (min-width: 641px) and (max-width: 768px) { .logo-icon { font-size: 3rem; } }
+        @media (min-width: 769px) and (max-width: 1024px) { .flex-box { flex-direction: row; } }
+        @media (min-width: 1025px) and (max-width: 1280px) { .main-content { max-width: 900px; } }
+        @media (min-width: 1281px) and (max-width: 1536px) { body { border: 15px solid var(--sky-blue); } }
+        @media (min-width: 1921px) { h1 { font-size: 5rem !important; } }
+
+        /* الأنيميشن بتاع الزرار */
+        .btn-main {
+            background: var(--sky-blue);
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-main:hover {
+            background: var(--holy-green);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(22, 163, 74, 0.2);
+        }
+
+        .loader-line {
+            width: 100px; height: 3px;
+            background: var(--holy-green);
+            margin: 20px auto;
+            border-radius: 10px;
+            position: relative;
+            overflow: hidden;
+        }
+        .loader-line::after {
+            content: ''; position: absolute; left: -100%;
+            width: 100%; height: 100%; background: var(--sky-blue);
+            animation: loading 2s infinite;
+        }
+        @keyframes loading { 100% { left: 100%; } }
+    </style>
+</head>
+<body class="flex items-center justify-center h-screen">
+
+    <div class="bg-pattern"></div>
+
+    <div class="main-content text-center p-6">
+        <div class="mb-6">
+            <i class="fa-solid fa-satellite-dish text-6xl text-sky-500 logo-icon mb-4"></i>
+            <h1 class="text-6xl font-black tracking-tighter text-slate-800">
+                SATELLITE <span class="text-sky-500">OS</span>
+            </h1>
+            <div class="loader-line"></div>
+        </div>
+
+        <div class="hero-text mb-12">
+            <h2 class="text-2xl font-bold text-slate-700 mb-2">منور يا بطل في أقوى سيستم أرصاد</h2>
+            <p class="text-slate-400 font-medium max-w-md mx-auto">
+                ده مش مجرد موقع طقس، ده قمر صناعي في جيبك. جرب وبص على مدينتك من فوق، وشوف التحاليل اللي مش هتلاقيها عند حد تاني.
+            </p>
+        </div>
+
+        <button onclick="enterSystem()" class="btn-main text-white px-12 py-5 rounded-full font-black text-xl shadow-xl flex items-center gap-4 mx-auto">
+            <span>يلا بينا نبدأ المسح</span>
+            <i class="fa-solid fa- rocket-launch"></i>
+            <i class="fa-solid fa-chevron-left text-sm opacity-50"></i>
+        </button>
+
+        <p class="mt-12 text-[10px] font-bold text-green-600 uppercase tracking-widest">
+            <i class="fa-solid fa-heart mr-1"></i> بفضل الله - تم الربط بالأقمار الصناعية
+        </p>
+    </div>
+
+    <script>
+        function enterSystem() {
+            // حركة صايعة قبل النقل
+            document.body.style.opacity = '0';
+            document.body.style.transition = '0.5s';
+            setTimeout(() => {
+                window.location.href = 'search.html';
+            }, 500);
+        }
+    </script>
+</body>
+</html>
