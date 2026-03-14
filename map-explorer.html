@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATELLITE OS | رادار المسح الجغرافي</title>
+    <title>  البحث الجغرافي</title>
     
     <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
     <script src="https://cdn.tailwindcss.com"></script>
@@ -21,14 +21,12 @@
         
         #map { height: 100vh; width: 100vw; z-index: 1; }
 
-        /* برواز القمر الصناعي الشيك */
         .map-frame {
             position: absolute; inset: 0;
             border: 15px solid rgba(255, 255, 255, 0.8);
             pointer-events: none; z-index: 1000;
         }
 
-        /* واجهة الكشف العلوي */
         .scanner-header {
             position: absolute; top: 30px; left: 50%; transform: translateX(-50%);
             z-index: 1001; background: white;
@@ -39,7 +37,6 @@
             min-width: 280px;
         }
 
-        /* زرار الرجوع للبيت */
         .back-home {
             position: absolute; bottom: 40px; right: 40px;
             z-index: 1001; background: var(--sky);
@@ -50,7 +47,6 @@
         }
         .back-home:hover { background: var(--green); transform: scale(1.1); }
 
-        /* 8 ميديا كويري عشان الشغل يظبط */
         @media (max-width: 320px) { .scanner-header { font-size: 0.7rem; min-width: 200px; padding: 5px 15px; } .map-frame { border-width: 5px; } }
         @media (min-width: 321px) and (max-width: 480px) { .scanner-header { top: 15px; width: 90%; } }
         @media (min-width: 481px) and (max-width: 640px) { .back-home { bottom: 20px; right: 20px; } }
@@ -60,7 +56,6 @@
         @media (min-width: 1281px) and (max-width: 1536px) { .scanner-header { padding: 15px 40px; } }
         @media (min-width: 1921px) { .scanner-header { transform: translateX(-50%) scale(1.5); } }
 
-        /* ستايل الليبلز (الأسماء) عشان تبان نظيفة */
         .leaflet-container { background: #000 !important; }
     </style>
 </head>
@@ -83,32 +78,26 @@
     <script>
         const API_KEY = "3348f565546828bf5e2c7f6cc94a8ced";
 
-        // 1. تشغيل الخريطة بمركز افتراضي (مصر المحروسة)
         var map = L.map('map', {
             zoomControl: false,
             attributionControl: false
         }).setView([26.8206, 30.8025], 6);
 
-        // 2. طبقة القمر الصناعي (صور حقيقية)
         L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19
         }).addTo(map);
 
-        // 3. طبقة الأسماء والمدن (Hybrid) - عشان تبان الدول والشوارع
         L.tileLayer('https://stamen-tiles-{s}.a.ssl.fastly.net/toner-hybrid/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
             opacity: 0.7
         }).addTo(map);
 
-        // 4. لما يدوس على الخريطة
         map.on('click', function(e) {
             const { lat, lng } = e.latlng;
             
-            // تغيير الحالة في الهيدر
             const header = document.querySelector('.scanner-header span');
             header.innerHTML = `جاري سحب بيانات الموقع: <span class="text-green-600">${lat.toFixed(2)}, ${lng.toFixed(2)}</span>`;
             
-            // إضافة علامة "نيشان" مكان الضغط
             L.circleMarker([lat, lng], {
                 radius: 12,
                 color: '#16a34a',
@@ -116,7 +105,6 @@
                 fillOpacity: 0.6
             }).addTo(map).bindPopup("<b style='font-family:Cairo'>بإذن الله جاري التحليل..</b>").openPopup();
 
-            // تنفيذ الكشف
             performAnalysis(lat, lng);
         });
 
@@ -127,7 +115,6 @@
 
                 if (data.cod === 200) {
                     localStorage.setItem('weatherData', JSON.stringify(data));
-                    // تأخير بسيط عشان نحس بالتحليل
                     setTimeout(() => {
                         window.location.href = 'general-analysis.html';
                     }, 1200);
@@ -137,7 +124,6 @@
             }
         }
 
-        // محاولة جلب موقع المستخدم فوراً لو وافق
         map.locate({setView: true, maxZoom: 8});
     </script>
 </body>
