@@ -19,7 +19,6 @@
             box-shadow: 0 10px 30px rgba(239, 68, 68, 0.05);
         }
 
-        /* ميديا كويري للتحذيرات */
         @media (max-width: 480px) { 
             .main-title { font-size: 1.5rem; }
             .alert-text { font-size: 0.8rem; }
@@ -66,7 +65,7 @@
 
         <div class="alert-card overflow-hidden">
             <div class="p-6 bg-red-50 border-b border-red-100">
-                <h3 class="font-black text-red-800 text-xs tracking-widest uppercase">سجل الطوارئ الرقمي</h3>
+                <h3 class="font-black text-red-800 text-xs tracking-widest uppercase">سجل الطوارئ </h3>
             </div>
             
             <div class="overflow-x-auto">
@@ -101,7 +100,6 @@
 
             let rowsHtml = "";
 
-            // 1. التوقعات (7 أيام) - دايماً بنخليها آمنة إلا لو فيه حرارة عالية جداً
             for (let i = 7; i >= 1; i--) {
                 let fDate = new Date();
                 fDate.setDate(today.getDate() + i);
@@ -115,12 +113,10 @@
                 `;
             }
 
-            // 2. الماضي (30 يوم) - بنحط فيها حالات وهمية عشان "شكل" السيستم
             for (let i = 0; i <= 30; i++) {
                 let pDate = new Date();
                 pDate.setDate(today.getDate() - i);
                 
-                // حركة صايعة: لو اليوم ده كان "جمعة" مثلاً نخليه "نشاط رياح"
                 let isCritical = (i === 12 || i === 25); 
 
                 rowsHtml += `
