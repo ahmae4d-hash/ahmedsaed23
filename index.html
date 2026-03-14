@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATELLITE OS | السيستم المصري للأرصاد</title>
+    <title>مشروع طقس </title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -11,9 +11,9 @@
 
     <style>
         :root {
-            --sky-blue: #0ea5e9;    /* الأزرق السماوي */
-            --holy-green: #16a34a;  /* الأخضر الديني */
-            --pure-white: #ffffff;  /* الأبيض */
+            --sky-blue: #0ea5e9;   
+            --holy-green: #16a34a;  
+            --pure-white: #ffffff; 
         }
 
         body {
@@ -24,7 +24,6 @@
             color: #1e293b;
         }
 
-        /* حركات الخلفية الهادية */
         .bg-pattern {
             position: absolute; inset: 0;
             background-image: radial-gradient(var(--sky-blue) 0.5px, transparent 0.5px);
@@ -33,7 +32,6 @@
             z-index: -1;
         }
 
-        /* الـ 8 ميديا كويري عشان الشغل يبان مظبوط على أي تليفون */
         @media (max-width: 320px) { h1 { font-size: 2rem !important; } .btn-main { width: 100%; } }
         @media (min-width: 321px) and (max-width: 480px) { .hero-text { font-size: 0.9rem; } }
         @media (min-width: 481px) and (max-width: 640px) { .container { padding: 10px; } }
@@ -43,7 +41,6 @@
         @media (min-width: 1281px) and (max-width: 1536px) { body { border: 15px solid var(--sky-blue); } }
         @media (min-width: 1921px) { h1 { font-size: 5rem !important; } }
 
-        /* الأنيميشن بتاع الزرار */
         .btn-main {
             background: var(--sky-blue);
             transition: all 0.4s ease;
@@ -93,13 +90,13 @@
         </div>
 
         <button onclick="enterSystem()" class="btn-main text-white px-12 py-5 rounded-full font-black text-xl shadow-xl flex items-center gap-4 mx-auto">
-            <span>يلا بينا نبدأ المسح</span>
+            <span>يلا بينا نبدأ البحث</span>
             <i class="fa-solid fa- rocket-launch"></i>
             <i class="fa-solid fa-chevron-left text-sm opacity-50"></i>
         </button>
 
         <p class="mt-12 text-[10px] font-bold text-green-600 uppercase tracking-widest">
-            <i class="fa-solid fa-heart mr-1"></i> بفضل الله - تم الربط بالأقمار الصناعية
+            <i class="fa-solid fa-heart mr-1"></i> بفضل الله - الارزاق على الله
         </p>
     </div>
 
