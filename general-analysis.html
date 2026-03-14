@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATELLITE OS | غرفة العمليات المصرية</title>
+    <title> غرفة العمليات المصرية</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -18,7 +18,6 @@
             margin: 0; min-height: 100vh;
         }
 
-        /* كروت "ابن بلد" شيك */
         .egy-card {
             background: #fff;
             border-radius: 35px;
@@ -28,7 +27,6 @@
         }
         .egy-card:hover { transform: scale(1.02); border-color: var(--sky); }
 
-        /* ميديا كويري عشان الشغل يبقى "على الشعرة" */
         @media (max-width: 320px) { .main-title { font-size: 1.2rem; } .temp-num { font-size: 4rem; } }
         @media (min-width: 321px) and (max-width: 480px) { .grid-stats { grid-template-columns: 1fr; } }
         @media (min-width: 481px) and (max-width: 640px) { .container { padding: 10px; } }
@@ -52,10 +50,10 @@
                     <span class="text-[10px] font-black text-green-600 uppercase tracking-widest">الإشارة تمام والرزق على الله</span>
                 </div>
                 <h1 class="main-title text-4xl font-black text-slate-800">تحليل منطقة: <span id="cityName" class="text-sky-500">--</span></h1>
-                <p class="text-slate-400 font-bold text-sm">بص يا بطل.. دي الخلاصة اللي القمر الصناعي بعتها</p>
+                <p class="text-slate-400 font-bold text-sm">بص يا بطل.. دي الخلاصة  بتعتها</p>
             </div>
             <button onclick="window.location.href='search.html'" class="bg-sky-50 text-sky-500 p-4 rounded-3xl font-bold hover:bg-sky-500 hover:text-white transition shadow-sm border border-sky-100">
-                <i class="fa-solid fa-satellite mr-2"></i> مسح جديد
+                <i class="fa-solid fa-satellite mr-2"></i> بحث جديد
             </button>
         </div>
 
@@ -110,22 +108,22 @@
 
                 <button onclick="window.location.href='wind-expert.html'" class="egy-card p-6 text-center hover:bg-green-600 group transition-all">
                     <i class="fa-solid fa-tornado text-3xl text-green-600 group-hover:text-white mb-3 block"></i>
-                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">فيزياء الرياح</span>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase"> الرياح</span>
                 </button>
 
                 <button onclick="window.location.href='pressure-expert.html'" class="egy-card p-6 text-center hover:bg-slate-800 group transition-all">
                     <i class="fa-solid fa-compress text-3xl text-slate-400 group-hover:text-white mb-3 block"></i>
-                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">خبير الضغط</span>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase"> الضغط</span>
                 </button>
 
                 <button onclick="window.location.href='disaster-expert.html'" class="egy-card p-6 text-center hover:bg-red-600 group transition-all">
                     <i class="fa-solid fa-biohazard text-3xl text-red-500 group-hover:text-white mb-3 block"></i>
-                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">رادار الكوارث</span>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase"> الكوارث</span>
                 </button>
 
                 <button onclick="window.location.href='rain-expert.html'" class="egy-card p-6 text-center hover:bg-blue-800 group transition-all">
                     <i class="fa-solid fa-cloud-showers-heavy text-3xl text-blue-500 group-hover:text-white mb-3 block"></i>
-                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase">محلل المطر</span>
+                    <span class="text-xs font-black text-slate-600 group-hover:text-white block uppercase"> المطر</span>
                 </button>
             </div>
         </div>
