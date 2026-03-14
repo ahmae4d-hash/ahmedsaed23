@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>SATELLITE OS | سجل الـ 30 يوم</title>
+    <title>  سجل الـ 30 يوم</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -19,14 +19,12 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.02);
         }
 
-        /* ميديا كويري لضبط الجدول على الموبايل */
         @media (max-width: 480px) { 
             .hide-on-mobile { display: none; }
             .main-title { font-size: 1.2rem; }
             td, th { padding: 10px 5px !important; font-size: 0.8rem; }
         }
         
-        /* تأثير الصفوف */
         .row-past { border-right: 4px solid #cbd5e1; }
         .row-future { border-right: 4px solid var(--green); background: #f0fdf4; }
     </style>
@@ -84,7 +82,6 @@
 
             let rowsHtml = "";
 
-            // 1. توليد الـ 7 أيام اللي جايين (المستقبل)
             for (let i = 7; i >= 1; i--) {
                 let futureDate = new Date();
                 futureDate.setDate(today.getDate() + i);
@@ -103,7 +100,6 @@
                 `;
             }
 
-            // 2. يوم النهاردة
             rowsHtml += `
                 <tr class="bg-sky-50 border-y-2 border-sky-200">
                     <td class="p-5 font-black text-sky-600">النهاردة</td>
@@ -113,7 +109,6 @@
                 </tr>
             `;
 
-            // 3. توليد الـ 30 يوم اللي فاتوا (الماضي)
             for (let i = 1; i <= 30; i++) {
                 let pastDate = new Date();
                 pastDate.setDate(today.getDate() - i);
